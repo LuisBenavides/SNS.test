@@ -1,6 +1,6 @@
-Package: SNS
+Package: SNS.test
 Type: Package
-Title: Sequential Normal Scores in Statistical Process Management
+Title: Sequential Normal Scores in Statistical Process Management for testing
 Version: 1.4.0
 Authors@R: c(person("Victor", "Tercero", email = "victor.tercero@tec.mx", role=c("aut")),
   person("Luis", "Benavides", email = "luisbv@tec.mx", role = c("aut", "cre")))
