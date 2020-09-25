@@ -77,7 +77,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
       z.ns = y.ns$Z
       z.sd = sd(z.ns)
       if (tie.correction == "EstimateSD2"){
-        z.sd = mean(z.ns^2)
+        z.sd = sqrt(mean(z.ns^2))
       }
       #tie.correction = Studentize
       mean.ref = mean(z.ns)
@@ -160,8 +160,9 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
           ucl = ucl / sqrt(n) #k / sqrt(n)
           #Correction for ties
           if (!is.null(rounding.factor)){
-            if(tie.correction == "EstimateSD"){
-              ucl= k * z.sd/sqrt(n)
+            ucl= k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
+            if(tie.correction == "Studentize"){
+              ucl = k
             }
           }
         }
