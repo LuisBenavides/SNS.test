@@ -70,10 +70,10 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
   Y <- NULL
   if (m > 0) { # if there are reference sample
     # generate the reference sample
-    Y <- SNS::getDist(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
+    Y <- SNS.test::getDist(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
     if (!is.null(rounding.factor)){
       #tie.correction = EstimatedSD or Studentize
-      y.ns = NS(X = Y)
+      y.ns = SNS.test::NS(X = Y)
       z.ns = y.ns$Z
       z.sd = sd(z.ns)
 
@@ -127,10 +127,10 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
     RL <- RL + 1
 
     # generate the subgroup to monitor
-    X <- SNS::getDist(n = n, dist = dist, mu = mu[2], sigma = sigma[2], dist.par = dist.par, rounding.factor = rounding.factor)
+    X <- SNS.test::getDist(n = n, dist = dist, mu = mu[2], sigma = sigma[2], dist.par = dist.par, rounding.factor = rounding.factor)
 
     # get the normal scores
-    ns <- SNS::NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta, alignment = alignment, constant = constant, scoring = scoring, Chi2corrector=Chi2corrector)
+    ns <- SNS.test::NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta, alignment = alignment, constant = constant, scoring = scoring, Chi2corrector=Chi2corrector)
     Z <- ns$Z
 
 
@@ -285,15 +285,15 @@ getARL <- function(n, m, theta = NULL, Ftheta = NULL,
   RLs <- NULL
   if (isParallel) {
     cluster <- parallel::makeCluster(parallel::detectCores() - 1)
-    parallel::clusterExport(cluster, "NS")
-    parallel::clusterExport(cluster, "getDist")
-    parallel::clusterExport(cluster, "getRL")
+    parallel::clusterExport(cluster, "SNS.test::NS")
+    parallel::clusterExport(cluster, "SNS.test::getDist")
+    parallel::clusterExport(cluster, "SNS.test::getRL")
     RLs <- parallel::parSapply(cluster, 1:replicates, getRL, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
     parallel::stopCluster(cluster)
   } else {
     t0 <- Sys.time()
     for (r in 1:replicates) {
-      RL <- SNS::getRL(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
+      RL <- SNS.test::getRL(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
 
       RLs <- c(RLs, RL)
 
