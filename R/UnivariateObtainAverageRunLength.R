@@ -76,7 +76,9 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
       y.ns = SNS.test::NS.test(X = Y)
       z.ns = y.ns$Z
       z.sd = sd(z.ns)
-
+      if (tie.correction == "EstimateSD2"){
+        z.sd = mean(z.ns^2)
+      }
       #tie.correction = Stdentize
       mean.ref = mean(z.ns)
       df = length(Y) - 1
@@ -143,7 +145,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
     #Correction for ties
     if (!is.null(rounding.factor)){
       if(tie.correction == "Studentize"){
-        t.mean = (Z - mean.ref) / (z.ns/sqrt(n))
+        t.mean = (Z - mean.ref) / (z.sd/sqrt(n))
         Z = qnorm(p = pt(q = t.mean, df = df), mean = 0, sd = 1)
       }
     }
