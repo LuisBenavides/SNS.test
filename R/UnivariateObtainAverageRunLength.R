@@ -64,13 +64,23 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
                   dist, mu, sigma, dist.par = c(0,1,1), scoring = "Z",
                   chart, chart.par, calibrate = FALSE, arl0 = 370,
                   alignment = "unadjusted", constant = NULL, absolute=FALSE,
-                  isFixed=FALSE,Chi2corrector="None", rounding.factor = NULL) {
+                  isFixed=FALSE,Chi2corrector="None", rounding.factor = NULL,
+                  tie.correction = "EstimateSD") {
   # initilize the reference sample
   Y <- NULL
   if (m > 0) { # if there are reference sample
     # generate the reference sample
     Y <- SNS::getDist(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
+    if (!is.null(rounding.factor)){
+      #tie.correction = EstimatedSD or Studentize
+      y.ns = NS(X = Y)
+      z.ns = y.ns$Z
+      z.sd = sd(z.ns)
 
+      #tie.correction = Stdentize
+      mean.ref = mean(z.ns)
+      df = length(Y) - 1
+    }
   }
 
   RL <- 0
@@ -79,6 +89,12 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
   switch(chart,
     Shewhart = {
       k <- chart.par[1]
+      #Correction for ties
+      if (!is.null(rounding.factor)){
+        if(tie.correction == "EstimateSD"){
+          k <- k * z.sd/sqrt(n)
+        }
+      }
     },
     CUSUM = {
       #type is always the last value in vector
@@ -117,6 +133,9 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
     ns <- SNS::NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta, alignment = alignment, constant = constant, scoring = scoring, Chi2corrector=Chi2corrector)
     Z <- ns$Z
 
+
+
+
     switch(scoring,
            "Z" = {# it is a vector with a subgroup size so it is needed to average them
              Z = mean(Z)
@@ -125,6 +144,15 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
              Z = sum(Z)
            }
     )
+
+
+    #Correction for ties
+    if (!is.null(rounding.factor)){
+      if(tie.correction == "Studentize"){
+        t.mean = (Z - mean.ref) / (z.ns/sqrt(n))
+        Z = qnorm(p = pt(q = t.mean, df = df), mean = 0, sd = 1)
+      }
+    }
 
     # if the subgroup is out of the limits
     # an alarm is detected
@@ -245,7 +273,8 @@ getARL <- function(n, m, theta = NULL, Ftheta = NULL,
                    print.RL = FALSE, progress = FALSE,
                    calibrate = FALSE, arl0 = 370,
                    alignment = "unadjusted", constant = NULL, absolute=FALSE,
-                   isFixed=FALSE, rounding.factor = NULL) {
+                   isFixed=FALSE, rounding.factor = NULL,
+                   tie.correction = "EstimateSD") {
 
   type = chart.par[length(chart.par)]
   if(type == 3 && scoring == "Z-SQ"){
@@ -259,12 +288,12 @@ getARL <- function(n, m, theta = NULL, Ftheta = NULL,
     parallel::clusterExport(cluster, "NS")
     parallel::clusterExport(cluster, "getDist")
     parallel::clusterExport(cluster, "getRL")
-    RLs <- parallel::parSapply(cluster, 1:replicates, getRL, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor)
+    RLs <- parallel::parSapply(cluster, 1:replicates, getRL, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
     parallel::stopCluster(cluster)
   } else {
     t0 <- Sys.time()
     for (r in 1:replicates) {
-      RL <- SNS::getRL(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor)
+      RL <- SNS::getRL(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
 
       RLs <- c(RLs, RL)
 
