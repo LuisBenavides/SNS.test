@@ -19,9 +19,9 @@
 #' @examples
 #' X = c(30, 45, 50)
 #' Y = c(20, 22, 25, 30, 70)
-#' dataAlignment(X,Y)
+#' dataAlignment.test(X,Y)
 #'
-dataAlignment <- function(X, Y,
+dataAlignment.test <- function(X, Y,
                           alignment="unadjusted", constant=NULL, absolute=FALSE){
   #Alignment
   switch (alignment,

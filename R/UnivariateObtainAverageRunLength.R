@@ -42,25 +42,25 @@
 #' #### Control chart parameters
 #' chart <- "Shewhart"
 #' chart.par <- c(3)
-#' shewhart <- getRL(1, n, m,
+#' shewhart <- getRL.test(1, n, m,
 #'   theta = NULL, Ftheta = NULL,dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0
 #' )
 #'
 #' chart <- "CUSUM"
 #' chart.par <- c(0.25, 4.4181, 3)
-#' cusum <- getRL(1, n, m,
+#' cusum <- getRL.test(1, n, m,
 #'   theta = NULL, Ftheta = NULL, dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0
 #' )
 #'
 #' chart <- "EWMA"
 #' chart.par <- c(0.2, 2.962)
-#' shewhart <- getRL(1, n, m,
+#' shewhart <- getRL.test(1, n, m,
 #'   theta = NULL, Ftheta = NULL,dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0
 #' )
-getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
+getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
                   dist, mu, sigma, dist.par = c(0,1,1), scoring = "Z",
                   chart, chart.par, calibrate = FALSE, arl0 = 370,
                   alignment = "unadjusted", constant = NULL, absolute=FALSE,
@@ -70,10 +70,10 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
   Y <- NULL
   if (m > 0) { # if there are reference sample
     # generate the reference sample
-    Y <- SNS.test::getDist(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
+    Y <- SNS.test::getDist.test(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
     if (!is.null(rounding.factor)){
       #tie.correction = EstimatedSD or Studentize
-      y.ns = SNS.test::NS(X = Y)
+      y.ns = SNS.test::NS.test(X = Y)
       z.ns = y.ns$Z
       z.sd = sd(z.ns)
 
@@ -89,12 +89,6 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
   switch(chart,
     Shewhart = {
       k <- chart.par[1]
-      #Correction for ties
-      if (!is.null(rounding.factor)){
-        if(tie.correction == "EstimateSD"){
-          k <- k * z.sd/sqrt(n)
-        }
-      }
     },
     CUSUM = {
       #type is always the last value in vector
@@ -127,10 +121,10 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
     RL <- RL + 1
 
     # generate the subgroup to monitor
-    X <- SNS.test::getDist(n = n, dist = dist, mu = mu[2], sigma = sigma[2], dist.par = dist.par, rounding.factor = rounding.factor)
+    X <- SNS.test::getDist.test(n = n, dist = dist, mu = mu[2], sigma = sigma[2], dist.par = dist.par, rounding.factor = rounding.factor)
 
     # get the normal scores
-    ns <- SNS.test::NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta, alignment = alignment, constant = constant, scoring = scoring, Chi2corrector=Chi2corrector)
+    ns <- SNS.test::NS.test(X = X, Y = Y, theta = theta, Ftheta = Ftheta, alignment = alignment, constant = constant, scoring = scoring, Chi2corrector=Chi2corrector)
     Z <- ns$Z
 
 
@@ -162,6 +156,12 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
         ucl = k
         if (scoring == "Z"){
           ucl = ucl / sqrt(n) #k / sqrt(n)
+          #Correction for ties
+          if (!is.null(rounding.factor)){
+            if(tie.correction == "EstimateSD"){
+              ucl= k * z.sd/sqrt(n)
+            }
+          }
         }
         if (abs(Z) >= ucl) in.Control <- FALSE
       },
@@ -242,7 +242,7 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 #' #### Control chart parameters
 #' chart <- "Shewhart"
 #' chart.par <- c(3)
-#' shewhart <- getARL(n, m,
+#' shewhart <- getARL.test(n, m,
 #'   theta = NULL, Ftheta = NULL, dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, print.RL = print.RL,
 #'   replicates = replicates, isParallel = isParallel,
@@ -251,7 +251,7 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 #'
 #' chart <- "CUSUM"
 #' chart.par <- c(0.25, 4.4181, 3)
-#' cusum <- getARL(n, m,
+#' cusum <- getARL.test(n, m,
 #'   theta = NULL, Ftheta = NULL, dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, print.RL = print.RL,
 #'   replicates = replicates, isParallel = isParallel,
@@ -260,13 +260,13 @@ getRL <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 #'
 #' chart <- "EWMA"
 #' chart.par <- c(0.2, 2.962)
-#' shewhart <- getARL(n, m,
+#' shewhart <- getARL.test(n, m,
 #'   theta = NULL, Ftheta = NULL, dist, mu, sigma, dist.par = dist.par,
 #'   chart = chart, chart.par = chart.par, print.RL = print.RL,
 #'   replicates = replicates, isParallel = isParallel,
 #'   calibrate = calibrate, arl0 = arl0
 #' )
-getARL <- function(n, m, theta = NULL, Ftheta = NULL,
+getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
                    dist, mu, sigma, dist.par = c(0, 1, 1),
                    chart, chart.par, scoring = "Z",Chi2corrector="None",
                    replicates = 10000, isParallel = TRUE,
@@ -285,15 +285,15 @@ getARL <- function(n, m, theta = NULL, Ftheta = NULL,
   RLs <- NULL
   if (isParallel) {
     cluster <- parallel::makeCluster(parallel::detectCores() - 1)
-    parallel::clusterExport(cluster, "SNS.test::NS")
-    parallel::clusterExport(cluster, "SNS.test::getDist")
-    parallel::clusterExport(cluster, "SNS.test::getRL")
+    parallel::clusterExport(cluster, "NS.test")
+    parallel::clusterExport(cluster, "getDist.test")
+    parallel::clusterExport(cluster, "getRL.test")
     RLs <- parallel::parSapply(cluster, 1:replicates, getRL, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
     parallel::stopCluster(cluster)
   } else {
     t0 <- Sys.time()
     for (r in 1:replicates) {
-      RL <- SNS.test::getRL(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
+      RL <- SNS.test::getRL.test(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
 
       RLs <- c(RLs, RL)
 

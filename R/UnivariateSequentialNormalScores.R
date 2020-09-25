@@ -240,13 +240,13 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
            output$E = E
          }
   )
-  class(output)="SNS" # Class definition
+  class(output)="SNS.test" # Class definition
   return(output) # return the sequential normal score
 }
 
 #' @import graphics
 #' @export
-plot.SNS <- function(x, ...){
+plot.SNS.test <- function(x, ...){
   par(mar = c(6,6,4,2))
 
   Z = x$Z

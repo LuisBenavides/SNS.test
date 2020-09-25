@@ -43,8 +43,8 @@
 #' @return A vector \code{x} with \code{n} observations generated following the selected distribution with its parameters.
 #' @export
 #' @examples
-#' getDist(1, "Normal", 0, 1)
-getDist <- function(n, dist, mu, sigma,
+#' getDist.test(1, "Normal", 0, 1)
+getDist.test <- function(n, dist, mu, sigma,
                     par.location = 0, par.scale = 1, par.shape = 1, dist.par = NULL,
                     rounding.factor = NULL) {
 

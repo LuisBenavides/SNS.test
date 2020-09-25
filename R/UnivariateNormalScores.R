@@ -28,13 +28,13 @@
 #' theta <- 40
 #' Ftheta <- 0.5
 #' # EXAMPLE CONDITIONAL
-#' NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta)
+#' NS.test(X = X, Y = Y, theta = theta, Ftheta = Ftheta)
 #'
 #' # EXAMPLE UNCONDITIONAL
 #' theta <- NULL
 #' Ftheta <- NULL
-#' NS(X = X, Y = Y, theta = theta, Ftheta = Ftheta)
-NS <- function(X, Y = NULL, theta = NULL, Ftheta = NULL,
+#' NS.test(X = X, Y = Y, theta = theta, Ftheta = Ftheta)
+NS.test <- function(X, Y = NULL, theta = NULL, Ftheta = NULL,
                scoring = "Z",Chi2corrector="None",
                alignment = "unadjusted", constant = NULL, absolute = FALSE
                ) {
@@ -44,7 +44,7 @@ NS <- function(X, Y = NULL, theta = NULL, Ftheta = NULL,
     return()
   }
 
-  ad <- SNS::dataAlignment(X, Y, alignment = alignment, constant = constant) # Alignment of the data
+  ad <- SNS.test::dataAlignment.test(X, Y, alignment = alignment, constant = constant) # Alignment of the data
   X <- ad$X
   Y <- ad$Y
 
