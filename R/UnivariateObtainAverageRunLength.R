@@ -79,7 +79,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
       if (tie.correction == "EstimateSD2"){
         z.sd = mean(z.ns^2)
       }
-      #tie.correction = Stdentize
+      #tie.correction = Studentize
       mean.ref = mean(z.ns)
       df = length(Y) - 1
     }
