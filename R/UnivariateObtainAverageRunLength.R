@@ -71,7 +71,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
   if (m > 0) { # if there are reference sample
     # generate the reference sample
     Y <- SNS.test::getDist.test(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
-    if (!is.null(rounding.factor)){
+    if (!is.null(rounding.factor) && rounding.factor != 0){
       #tie.correction = EstimatedSD or Studentize
       y.ns = SNS.test::NS.test(X = Y)
       z.ns = y.ns$Z
@@ -143,7 +143,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 
 
     #Correction for ties
-    if (!is.null(rounding.factor)){
+    if (!is.null(rounding.factor)  && rounding.factor != 0){
       if(tie.correction == "Studentize"){
         t.mean = (Z - mean.ref) / (z.sd/sqrt(n))
         Z = qnorm(p = pt(q = t.mean, df = df), mean = 0, sd = 1)
@@ -159,7 +159,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
         if (scoring == "Z"){
           ucl = ucl / sqrt(n) #k / sqrt(n)
           #Correction for ties
-          if (!is.null(rounding.factor)){
+          if (!is.null(rounding.factor) && rounding.factor != 0){
             ucl= k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
             if(tie.correction == "Studentize"){
               ucl = k
