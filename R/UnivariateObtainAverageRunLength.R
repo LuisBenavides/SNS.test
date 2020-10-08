@@ -65,23 +65,26 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
                   chart, chart.par, calibrate = FALSE, arl0 = 370,
                   alignment = "unadjusted", constant = NULL, absolute=FALSE,
                   isFixed=FALSE,Chi2corrector="None", rounding.factor = NULL,
-                  tie.correction = "EstimateSD") {
+                  tie.correction = "EstimateSD",
+                  stop.times = 1, replicates = 1) {
   # initilize the reference sample
   Y <- NULL
   if (m > 0) { # if there are reference sample
     # generate the reference sample
     Y <- SNS.test::getDist.test(n = m, dist = dist, mu = mu[1], sigma = sigma[1], dist.par = dist.par, rounding.factor = rounding.factor)
     if (!is.null(rounding.factor)){
-      #tie.correction = EstimatedSD or Studentize
-      y.ns = SNS.test::NS.test(X = Y)
-      z.ns = y.ns$Z
-      z.sd = sd(z.ns)
-      if (tie.correction == "EstimateSD2"){
-        z.sd = sqrt(mean(z.ns^2))
+      if (tie.correction != "None"){
+        #tie.correction = EstimatedSD or Studentize
+        y.ns = SNS.test::NS.test(X = Y)
+        z.ns = y.ns$Z
+        z.sd = sd(z.ns)
+        if (tie.correction == "EstimateSD2"){
+          z.sd = sqrt(mean(z.ns^2))
+        }
+        #tie.correction = Studentize
+        mean.ref = mean(z.ns)
+        df = length(Y) - 1
       }
-      #tie.correction = Studentize
-      mean.ref = mean(z.ns)
-      df = length(Y) - 1
     }
   }
 
@@ -160,9 +163,11 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
           ucl = ucl / sqrt(n) #k / sqrt(n)
           #Correction for ties
           if (!is.null(rounding.factor)){
-            ucl= k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
-            if(tie.correction == "Studentize"){
-              ucl = k
+            if(tie.correction != "None"){
+              ucl= k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
+              if(tie.correction == "Studentize"){
+                ucl = k
+              }
             }
           }
         }
@@ -196,13 +201,25 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
       }
     )
 
-    if (calibrate){
-      if (RL >= arl0){
+
+    if (!is.null(rounding.factor)){
+      if(tie.correction == "None"){
+
+        p = 1 - dbinom(stop.times, replicates, prob = 0.5)
+        if ((RL >= arl0 * 15) || (p < 0.0001)){
+          RL = arl0 * 15
+          in.Control <- FALSE
+        }
+      }
+    }else{
+      if (calibrate){
+        if (RL >= arl0){
+          in.Control <- FALSE
+        }
+      }
+      if (RL >= arl0 * 1000){
         in.Control <- FALSE
       }
-    }
-    if (RL >= arl0 * 1000){
-      in.Control <- FALSE
     }
 
     # update the reference sample
@@ -295,9 +312,12 @@ getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
     parallel::stopCluster(cluster)
   } else {
     t0 <- Sys.time()
+    stop.times <- 0
     for (r in 1:replicates) {
       RL <- SNS.test::getRL.test(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
-
+      if(RLs == arl0  * 15){
+        stop.times <- stop.times + 1
+      }
       RLs <- c(RLs, RL)
 
       # print out progress
@@ -316,7 +336,8 @@ getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
     ARL = mean(RLs),
     SDRL = sd(RLs),
     MRL = median(RLs),
-    QRL = quantile(x = RLs, probs = c(0.05, 0.1, 0.2, 0.25, 0.5, 0.75, 0.8, 0.9, 0.95), names = TRUE, type = 3)
+    QRL = quantile(x = RLs, probs = c(0.05, 0.1, 0.2, 0.25, 0.5, 0.75, 0.8, 0.9, 0.95), names = TRUE, type = 3),
+    stop.times = stop.times
   )
   if (print.RL) output$RL <- RLs
 
