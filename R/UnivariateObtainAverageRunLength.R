@@ -317,7 +317,7 @@ getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
 
     for (r in 1:replicates) {
       RL <- SNS.test::getRL.test(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction, stop.times = stop.times, replicates = r)
-      if(RLs == arl0  * 15){
+      if(RL == arl0  * 15){
         stop.times <- stop.times + 1
       }
       RLs <- c(RLs, RL)
