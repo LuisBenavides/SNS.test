@@ -203,14 +203,13 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 
 
     if (!is.null(rounding.factor)){
-      if(tie.correction == "None"){
 
         p = 1 - dbinom(stop.times, replicates, prob = 0.5)
         if ((RL >= arl0 * 15) || (p < 0.0001)){
           RL = arl0 * 15
           in.Control <- FALSE
         }
-      }
+
     }else{
       if (calibrate){
         if (RL >= arl0){
