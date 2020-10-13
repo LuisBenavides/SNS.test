@@ -305,13 +305,30 @@ getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
   RLs <- NULL
   stop.times <- 0
   if (isParallel) {
+    #iter_stop.times <- iterators::icount(replicates)
+    #stop.times <- as.numeric(iterators::nextElem(iter_stop.times))
     cluster <- parallel::makeCluster(parallel::detectCores() - 1)
+    #export variables
+    #parallel::clusterExport(cluster, c("stop.times", "n", "m", "theta", "Ftheta", "dist", "mu", "sigma", "dist.par", "chart", "chart.par", "calibrate", "arl0", "alignment", "constant","absolute","isFixed","scoring","Chi2corrector", "rounding.factor","tie.correction"), envir = environment())
+    parallel::clusterExport(cluster, c("stop.times"), envir = environment())
     parallel::clusterExport(cluster, "NS.test")
     parallel::clusterExport(cluster, "getDist.test")
     parallel::clusterExport(cluster, "getRL.test")
-    RLs <- parallel::parSapply(cluster, 1:replicates, getRL.test, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
-    parallel::stopCluster(cluster)
 
+    #doParallel::registerDoParallel(cluster)
+    RLs <- parallel::parSapply(cluster, 1:replicates, getRL.test, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction)
+    #RLs <- foreach::foreach(r = 1:replicates, .combine=c) %do% {
+    #  RL <- SNS.test::getRL.test(1, n = n, m = m, theta = theta, Ftheta = Ftheta, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart = chart, chart.par = chart.par, calibrate = calibrate, arl0 = arl0, alignment=alignment, constant=constant,absolute=absolute,isFixed=isFixed,scoring=scoring,Chi2corrector=Chi2corrector, rounding.factor = rounding.factor,tie.correction =tie.correction, stop.times = stop.times, replicates = r)
+    #  if(RL == arl0  * 15){
+        #stop.times <- as.numeric(iterators::nextElem(iter_stop.times))
+    #    stop.times <- stop.times + 1
+    #  }
+    #  RL
+    #}
+
+
+    parallel::stopCluster(cluster)
+    stop.times = sum(RLs == arl0 *15)
   } else {
     t0 <- Sys.time()
 
