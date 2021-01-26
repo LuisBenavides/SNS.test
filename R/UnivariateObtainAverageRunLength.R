@@ -164,7 +164,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
           #Correction for ties
           if (!is.null(rounding.factor)){
             if(tie.correction != "None"){
-              ucl= k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
+              ucl = k * z.sd/sqrt(n) #if tie.correction == "EstimateSD" || tie.correction == "EstimateSD2"
               if(tie.correction == "Studentize"){
                 ucl = k
               }
@@ -304,6 +304,8 @@ getARL.test <- function(n, m, theta = NULL, Ftheta = NULL,
   RLs <- NULL
   stop.times <- 0
   if (isParallel) {
+    #probar con esta solucion
+    # https://stackoverflow.com/questions/56985567/r-parallel-programming-with-two-loops-and-storage-results/56986582
     #iter_stop.times <- iterators::icount(replicates)
     #stop.times <- as.numeric(iterators::nextElem(iter_stop.times))
     cluster <- parallel::makeCluster(parallel::detectCores() - 1)

@@ -53,6 +53,7 @@
 #' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
 SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
                 scoring = "Z", Chi2corrector="None",
+                tie.correction = "None",
                 alignment = "unadjusted", constant = NULL, absolute = FALSE,
                 chart="Shewhart", chart.par=c(3),
                 snsRaw = FALSE, isFixed = FALSE,
@@ -100,6 +101,20 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     Yb = Yb[!is.na(Yb)] # initialize reference sample (remove na values)
   }
 
+  if (tie.correction != "None"){
+    #tie.correction = EstimatedSD or Studentize
+    y.ns = SNS.test::NS.test(X = Y)
+    z.ns = y.ns$Z
+    z.sd = sd(z.ns)
+    if (tie.correction == "EstimateSD2"){
+      z.sd = sqrt(mean(z.ns^2))
+    }
+    #tie.correction = Studentize
+    mean.ref = mean(z.ns)
+    df = length(Y) - 1
+  }
+
+
   UCL = rep(NA, length(groups))
   LCL = rep(NA, length(groups))
   switch(chart,
@@ -122,6 +137,8 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
            e <- 0
          }
   )
+
+
 
   ucl = 0
   if (scoring == "Z-SQ"){
@@ -153,6 +170,12 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
         z[i] = sum(ns)
       }
     )
+
+    #Correction for ties
+    if(tie.correction == "Studentize"){
+      t.mean = (z[i] - mean.ref) / (z.sd/sqrt(n))
+      z[i] = qnorm(p = pt(q = t.mean, df = df), mean = 0, sd = 1)
+    }
     Z = z[i]
 
     # check if the subgroup is in control according to each scheme
@@ -161,7 +184,11 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     switch(chart,
            Shewhart = {
              if (scoring == "Z"){
-               ucl = k
+               if( (tie.correction == "EstimateSD") || (tie.correction == "EstimateSD2")){
+                 ucl = k * z.sd
+               }else{# if tie.correction == "None" || tie.correction == "Studentize"
+                 ucl = k
+               }
              }
              if (abs(Z) < ucl) updateSample <- TRUE
            },
