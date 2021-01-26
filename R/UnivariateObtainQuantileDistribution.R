@@ -1,12 +1,12 @@
 #' @title Obtain Quantile from Distribution Function
 #' @description Get the quantile \code{theta} from several distributions with user defined mean and variance.
-#' @inheritParams getDist
-#' @inheritParams NS
+#' @inheritParams getDist.test
+#' @inheritParams NS.test
 #' @return A quantile \code{theta} of the selected \code{Ftheta} distribution with its parameters.
 #' @export
 #' @examples
-#' getQuantile(0.5, 0, 1, "Normal")
-getQuantile <- function(Ftheta, mu, sigma, dist,
+#' getQuantile.test(0.5, 0, 1, "Normal")
+getQuantile.test <- function(Ftheta, mu, sigma, dist,
                         par.location = 0, par.scale = 1, par.shape = 1, dist.par = NULL) {
   switch(dist,
          Uniform  = {

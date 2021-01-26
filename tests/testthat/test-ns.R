@@ -1,4 +1,4 @@
-library("SNS")
+library("SNS.test")
 context("test-ns")
 
 

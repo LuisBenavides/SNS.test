@@ -1,7 +1,7 @@
 #' @title Normal Scores
 #' @description Get conditional or unconditional normal score (NS) of observations (\code{X})
 #' relative to previous observations (\code{Y}).
-#' @inheritParams dataAlignment
+#' @inheritParams dataAlignment.test
 #' @param X vector. New observations to obtain the N¡normal scores.
 #' @param Y vector. If \code{Y} is not defined (no previous observation available, \code{NULL}), NS is relative to \code{X}. Default \code{NULL}.
 #' @param theta scalar. Value corresponig with the \code{Ftheta} quantile.

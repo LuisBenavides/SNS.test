@@ -1,7 +1,7 @@
 #' @title Run Length
 #' @description Get the run length
-#' @inheritParams getDist
-#' @inheritParams NS
+#' @inheritParams getDist.test
+#' @inheritParams NS.test
 #' @param replica scalar. It is used for the parallel version of the function (\code{parallel=TRUE}). Default \code{1}.
 #' @param n scalar. Subroup size
 #' @param m scalar. Reference sample size
@@ -230,8 +230,8 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 }
 
 #' @title Average Run Length (ARL)
-#' @description Get the ARL \code{\link{getRL}}
-#' @inheritParams getRL
+#' @description Get the ARL \code{\link{getRL.test}}
+#' @inheritParams getRL.test
 #' @param print.RL logical. If \code{TRUE} return the vectors of RL for each iteration.
 #' @param replicates scalar. Number of replicates to get the ARL
 #' @param progress logical. If \code{TRUE} it shows the progress in the console.

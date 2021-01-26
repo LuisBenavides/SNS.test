@@ -1,5 +1,5 @@
 ---
-title: "Usage SNS package"
+title: "Usage SNS packages"
 author: "Luis Benavides"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette  
@@ -7,7 +7,7 @@ bibliography: bibliography.bib
 vignette: >
   %\VignetteIndexEntry{SNS Packages}
   %\VignetteEncoding{UTF-8}
-  %\VignetteDepends{SNS}
+  %\VignetteDepends{SNS.test}
   %\VignetteEngine{knitr::rmarkdown}
 ---
 
@@ -18,13 +18,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-Install the package `SNS` hosted in [github](https://github.com/LuisBenavides/sns).
+Install the package `SNS.test` hosted in [github](https://github.com/LuisBenavides/snstest).
 ```{r, eval=FALSE, echo=T, results='hide',message=F, warning=F}
-install_github("LuisBenavides/SNS")
+install_github("LuisBenavides/SNS.test")
 ```
 Load the package
 ```{r, echo=TRUE, eval=FALSE, results='hide'}
-library("SNS")
+library("SNS.test")
 ```
 
 ## Using Sequential Normal Scores to Detect a Change in Location (Shewhart Scheme)
@@ -36,21 +36,21 @@ X.id = example82$X.id
 ```
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example82, 10))
+knitr::kable(head(SNS.test::example82, 10))
 ```
 
 Get the sns of the dataset
 ```{r,echo=T,eval=F, results='hide', message=F, warning=F}
-s = SNS(X=X,X.id=X.id)
+s = SNS.test(X=X,X.id=X.id)
 ```
 to plot it
 ```{r,echo=T,eval=F, results='hide', message=F, warning=F}
 plot(s)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example82$X #get the dataset into a data frame
-X.id = SNS::example82$X.id
-s = SNS::SNS(X=X,X.id=X.id)
+X = SNS.test::example82$X #get the dataset into a data frame
+X.id = SNS.test::example82$X.id
+s = SNS.test::SNS.test(X=X,X.id=X.id)
 plot(s)
 ```
 
@@ -63,21 +63,21 @@ X.id = example84$X.id
 ```
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example84, 10))
+knitr::kable(head(SNS.test::example84, 10))
 ```
 
 Get the sns of the dataset using a CUSUM scheme
 ```{r,echo=T,eval=F}
-s = SNS(X=X,X.id=X.id, chart="CUSUM", chart.par=c(0.5, 4.389, 3)) 
+s = SNS.test(X=X,X.id=X.id, chart="CUSUM", chart.par=c(0.5, 4.389, 3)) 
 ```
 to plot it
 ```{r,echo=T,eval=F}
 plot(s)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example84$X #get the dataset into a data frame
-X.id = SNS::example84$X.id
-s = SNS::SNS(X=X,X.id=X.id, chart="CUSUM", chart.par=c(0.5, 4.389, 3)) 
+X = SNS.test::example84$X #get the dataset into a data frame
+X.id = SNS.test::example84$X.id
+s = SNS.test::SNS.test(X=X,X.id=X.id, chart="CUSUM", chart.par=c(0.5, 4.389, 3)) 
 plot(s)
 ```
 
@@ -90,12 +90,12 @@ X.id = example84$X.id
 ```
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example84, 10))
+knitr::kable(head(SNS.test::example84, 10))
 ```
 
 Get the sns of the dataset using a EWMA scheme
 ```{r,echo=T,eval=F}
-s = SNS(X=X,X.id=X.id, chart="EWMA", chart.par=c(0.01, 2.0171))
+s = SNS.test(X=X,X.id=X.id, chart="EWMA", chart.par=c(0.01, 2.0171))
 ```
 
 to plot it
@@ -103,9 +103,9 @@ to plot it
 plot(s)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example84$X #get the dataset into a data frame
-X.id = SNS::example84$X.id
-s = SNS::SNS(X=X,X.id=X.id, chart="EWMA", chart.par=c(0.01, 2.0171))
+X = SNS.test::example84$X #get the dataset into a data frame
+X.id = SNS.test::example84$X.id
+s = SNS.test::SNS.test(X=X,X.id=X.id, chart="EWMA", chart.par=c(0.01, 2.0171))
 plot(s)
 ```
 
@@ -119,12 +119,12 @@ Y = example87$Y
 ```
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example87, 10))
+knitr::kable(head(SNS.test::example87, 10))
 ```
 
 Get the sns of the dataset using a EWMA scheme
 ```{r,echo=T,eval=F}
-s = SNS(X=X,X.id=X.id, Y=Y, chart="EWMA", chart.par=c(0.01, 2.0171))
+s = SNS.test(X=X,X.id=X.id, Y=Y, chart="EWMA", chart.par=c(0.01, 2.0171))
 ```
 
 to plot it
@@ -132,10 +132,10 @@ to plot it
 plot(s)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example87$X #get the dataset into a data frame
-X.id = SNS::example87$X.id
-Y = SNS::example87$Y
-s = SNS::SNS(X=X,X.id=X.id, Y=Y, chart="EWMA", chart.par=c(0.01, 2.0171))
+X = SNS.test::example87$X #get the dataset into a data frame
+X.id = SNS.test::example87$X.id
+Y = SNS.test::example87$Y
+s = SNS.test::SNS.test(X=X,X.id=X.id, Y=Y, chart="EWMA", chart.par=c(0.01, 2.0171))
 plot(s)
 ```
 
@@ -149,12 +149,12 @@ Y = example49$Y2
 ```
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example49, 10))
+knitr::kable(head(SNS.test::example49, 10))
 ```
 
 Get the SNS^2 of the dataset using a Shewhart scheme. In the example the reference sample is fixed therefore \code{isFixed=TRUE}.
 ```{r,echo=T,eval=F}
-s = SNS(X=X,X.id=X.id, Y=Y, chart="Shewhart", scoring="Z-SQ",isFixed = TRUE)
+s = SNS.test(X=X,X.id=X.id, Y=Y, chart="Shewhart", scoring="Z-SQ",isFixed = TRUE)
 ```
 
 to plot it. Only the plot of the monitoring sample is presented.
@@ -162,10 +162,10 @@ to plot it. Only the plot of the monitoring sample is presented.
 plot(s)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example49$X2
-X.id = SNS::example49$X.id
-Y = SNS::example49$Y2
-s = SNS::SNS(X=X,X.id=X.id, Y=Y, chart="Shewhart", scoring="Z-SQ",isFixed = TRUE)
+X = SNS.test::example49$X2
+X.id = SNS.test::example49$X.id
+Y = SNS.test::example49$Y2
+s = SNS.test::SNS.test(X=X,X.id=X.id, Y=Y, chart="Shewhart", scoring="Z-SQ",isFixed = TRUE)
 plot(s)
 ```
 
@@ -179,7 +179,7 @@ X.id = example91$X.id
 
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example91, 10))
+knitr::kable(head(SNS.test::example91, 10))
 ```
 
 Get the multivariate sequential normal scores
@@ -191,9 +191,9 @@ and plot it
 plot(msns)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example91[,1:2] #get the dataset into a data frame
-X.id = SNS::example91$X.id
-msns = SNS::MSNS(X, X.id)
+X = SNS.test::example91[,1:2] #get the dataset into a data frame
+X.id = SNS.test::example91$X.id
+msns = SNS.test::MSNS(X, X.id)
 plot(msns)
 ```
 
@@ -207,7 +207,7 @@ X.id = example93$X.id
 
 Table with the dataset using dataframe of \code{R} (first 10 rows).
 ```{r, echo=FALSE, results='asis'}
-knitr::kable(head(SNS::example93, 10))
+knitr::kable(head(SNS.test::example93, 10))
 ```
 
 Get the multivariate sequential normal scores. Null distribution considered is the \code{F} statistic.
@@ -219,9 +219,9 @@ and plot it
 plot(msns)
 ```
 ```{r,echo=F,eval=T, results='hide', message=F, warning=F,fig.width = 9, fig.height = 6}
-X = SNS::example93[,1:2] #get the dataset into a data frame
-X.id = SNS::example93$X.id
-msns = SNS::MSNS(X, X.id, null.dist = "F")
+X = SNS.test::example93[,1:2] #get the dataset into a data frame
+X.id = SNS.test::example93$X.id
+msns = SNS.test::MSNS(X, X.id, null.dist = "F")
 plot(msns)
 ```
 

@@ -1,7 +1,7 @@
 #' Calibration of the control limit for the selected chart
 #' @description The methodology used to calibrate the control limit
 #' for the SNS chart depending on the selected chart
-#' @inheritParams getARL
+#' @inheritParams getARL.test
 #' @param targetARL scalar. is the target ARL to calibrate. By default is set to NULL
 #' @param targetMRL scalar. is the target ARL to calibrate. By default is set to NULL
 #' @param maxIter scalar. is a numeric. The maximum number of iteration to take the calibration before stops
@@ -25,7 +25,7 @@
 #' #### Control chart parameters
 #' chart <- "Shewhart"
 #' chart.par <- c(3)
-#' shewhart <- calibrateControlLimit(
+#' shewhart <- calibrateControlLimit.test(
 #'   targetARL = targetARL, targetMRL = NULL, n = n, m = m, theta = NULL,
 #'   Ftheta = NULL, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart.par = chart.par,
 #'   replicates = replicates, chart = chart, isParallel = isParallel
@@ -33,7 +33,7 @@
 #'
 #' chart <- "CUSUM"
 #' chart.par <- c(0.5, 2.5, 3)
-#' cusum <- calibrateControlLimit(
+#' cusum <- calibrateControlLimit.test(
 #'   targetARL = targetARL, targetMRL = NULL, n = n, m = m, theta = NULL,
 #'   Ftheta = NULL, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart.par = chart.par,
 #'   replicates = replicates, chart = chart, isParallel = isParallel
@@ -41,12 +41,12 @@
 #'
 #' chart <- "EWMA"
 #' chart.par <- c(0.2, 2.962)
-#' ewma <- calibrateControlLimit(
+#' ewma <- calibrateControlLimit.test(
 #'   targetARL = targetARL, targetMRL = NULL, n = n, m = m, theta = NULL,
 #'   Ftheta = NULL, dist = dist, mu = mu, sigma = sigma, dist.par = dist.par, chart.par = chart.par,
 #'   replicates = replicates, chart = chart, isParallel = isParallel
 #' )
-calibrateControlLimit <- function(targetARL = NULL, targetMRL = NULL,
+calibrateControlLimit.test <- function(targetARL = NULL, targetMRL = NULL,
                                   n, m, theta = NULL, Ftheta = NULL,
                                   scoring = "Z", Chi2corrector="None",
                                   dist, mu, sigma, dist.par = c(0, 1, 1),
@@ -103,7 +103,7 @@ calibrateControlLimit <- function(targetARL = NULL, targetMRL = NULL,
   while (i < maxIter) {
     chart.par[index.par] <- x[i]
 
-    result <- SNS::getARL(n = n, m = m, theta = theta, Ftheta = Ftheta,
+    result <- SNS.test::getARL.test(n = n, m = m, theta = theta, Ftheta = Ftheta,
                           dist = dist, mu = mu, sigma = sigma, dist.par = dist.par,
                           chart = chart, chart.par = chart.par, replicates = replicates,
                           isParallel = isParallel, calibrate = TRUE, arl0 = ARL0,

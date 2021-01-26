@@ -1,7 +1,7 @@
 #' @title Multivariate Normal Scores
 #' @description Get conditional or unconditional multivariate normal score (NS) of observations (\code{X})
 #' relative to previous observations (\code{Y}).
-#' @inheritParams dataAlignment
+#' @inheritParams dataAlignment.test
 #' @param X matrix or data.frame. New observations to obtain the normal scores.
 #' @param Y matrix or data.frame. If \code{Y} is not defined (no previous observation available, \code{NULL}), NS is relative to \code{X}. Default \code{NULL}.
 #' @param theta vector. Value corresponding with the \code{Ftheta} quantile.
@@ -33,7 +33,7 @@ MNS <- function(X, Y = NULL, theta = NULL, Ftheta = NULL, scoring = "Z",
     return()
   }
 
-  ad <- SNS::dataAlignment(X=X, Y=Y, alignment = alignment, constant = constant) # Alignment of the data
+  ad <- SNS.test::dataAlignment.test(X=X, Y=Y, alignment = alignment, constant = constant) # Alignment of the data
   X <- ad$X
   Y <- ad$Y
 

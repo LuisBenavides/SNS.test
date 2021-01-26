@@ -3,13 +3,14 @@
 #' SNS follow the order of \code{X}.
 #' @section Comments:
 #' If ties occur, average ranks are used.
-#' @seealso \code{\link{NS}} for normal scores
-#' @inheritParams NS
-#' @inheritParams getRL
+#' @seealso \code{\link{NS.test}} for normal scores
+#' @inheritParams NS.test
+#' @inheritParams getRL.test
 #' @param X.id vector. The id of the vector \code{X}.
 #' @param snsRaw logical. If \code{TRUE} return also the sns for each observation in vector \code{X}.
 #' @param omit.id vector. Elements of the vector are the id which are omitted in the analysis.
 #' @param auto.omit.alarm logical. Determine if OC signals are added (or not) to reference sample. By default is set to TRUE.
+#' @param tie.correction string. Select from
 #' @export
 #' @examples
 #' # EXAMPLE CONDITIONAL WITH REFERENCE SAMPLE
@@ -18,7 +19,7 @@
 #' theta <- 40
 #' Ftheta <- 0.5
 #' sample.id <- c("a", "b", "c")
-#' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
+#' SNS.test(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
 #'
 #' # EXAMPLE CONDITIONAL WITH REFERENCE SAMPLE
 #' Y <- c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
@@ -26,7 +27,7 @@
 #' theta <- 40
 #' Ftheta <- 0.5
 #' sample.id <- c("a", "b", "c")
-#' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
+#' SNS.test(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
 #'
 #' # EXAMPLE UNCONDITIONAL WITH REFERENCE SAMPLE
 #' Y <- c(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
@@ -34,7 +35,7 @@
 #' theta <- NULL
 #' Ftheta <- NULL
 #' sample.id <- c("a", "b", "c")
-#' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
+#' SNS.test(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
 #'
 #' # EXAMPLE CONDITIONAL WITHOUT REFERENCE SAMPLE
 #' Y <- NULL # c(10,20,30,40,50,60,70,80,90,100)
@@ -42,7 +43,7 @@
 #' theta <- 40
 #' Ftheta <- 0.5
 #' sample.id <- c("a", "b", "c")
-#' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
+#' SNS.test(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
 #'
 #' # EXAMPLE UNCONDITIONAL WITHOUT REFERENCE SAMPLE
 #' Y <- NULL
@@ -50,8 +51,8 @@
 #' theta <- NULL
 #' Ftheta <- NULL
 #' sample.id <- c("a", "b", "c")
-#' SNS(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
-SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
+#' SNS.test(X = X, X.id = sample.id, Y = Y, theta = theta, Ftheta = Ftheta)
+SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
                 scoring = "Z", Chi2corrector="None",
                 tie.correction = "None",
                 alignment = "unadjusted", constant = NULL, absolute = FALSE,
@@ -150,10 +151,10 @@ SNS <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
   while (i <= length(groups)) { # repeat until the total groups are analized
     Xb = X[which(Xb.id == groups[i])] # get the observations to evalute from the positions
     n = length(Xb)
-    ad = SNS::dataAlignment(Xb, Yb, alignment = alignment)
+    ad = SNS.test::dataAlignment.test (Xb, Yb, alignment = alignment)
     Xb = ad$X
     Yb = ad$Y
-    ns = SNS::NS(X = Xb, Y = Yb, theta = theta, Ftheta = Ftheta, scoring = scoring, Chi2corrector = Chi2corrector, alignment = alignment, constant = constant) # calculate the normal score
+    ns = SNS.test::NS.test(X = Xb, Y = Yb, theta = theta, Ftheta = Ftheta, scoring = scoring, Chi2corrector = Chi2corrector, alignment = alignment, constant = constant) # calculate the normal score
 
     r[i] = mean(ns$R)
     if(snsRaw){#save raw data
