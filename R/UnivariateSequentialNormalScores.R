@@ -186,7 +186,7 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
            Shewhart = {
              if (scoring == "Z"){
                if( (tie.correction == "EstimateSD") || (tie.correction == "EstimateSD2")){
-                 ucl = k * z.sd
+                 ucl = k * z.sd/sqrt(n)
                }else{# if tie.correction == "None" || tie.correction == "Studentize"
                  ucl = k
                }
