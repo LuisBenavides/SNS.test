@@ -58,7 +58,8 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
                 alignment = "unadjusted", constant = NULL, absolute = FALSE,
                 chart="Shewhart", chart.par=c(3),
                 snsRaw = FALSE, isFixed = FALSE,
-                omit.id = NULL, auto.omit.alarm = TRUE) {
+                omit.id = NULL, auto.omit.alarm = TRUE,
+                isExample = FALSE) {
 
   if (is.null(theta) != is.null(Ftheta)) { # in case one is NULL and not the other
     print("ERROR, theta or Ftheta missing")
@@ -176,20 +177,19 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     if(tie.correction == "Studentize"){
       t.mean = (z[i] - mean.ref) / (z.sd/sqrt(n))
       z[i] = qnorm(p = pt(q = t.mean, df = df), mean = 0, sd = 1)
+    }else if( (tie.correction == "EstimateSD") || (tie.correction == "EstimateSD2")){
+      z[i] = z[i] / (z.sd/sqrt(n))
+    }else{
+      z[i] = z[i]
     }
     Z = z[i]
-
     # check if the subgroup is in control according to each scheme
     # the reference sample is updated
     updateSample <- FALSE
     switch(chart,
            Shewhart = {
              if (scoring == "Z"){
-               if( (tie.correction == "EstimateSD") || (tie.correction == "EstimateSD2")){
-                 ucl = k * z.sd/sqrt(n)
-               }else{# if tie.correction == "None" || tie.correction == "Studentize"
-                 ucl = k
-               }
+               ucl = k
              }
              if (abs(Z) < ucl) updateSample <- TRUE
            },
@@ -253,7 +253,9 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     X.id = X.id,
     UCL = UCL,
     LCL = LCL,
-    scoring = scoring
+    scoring = scoring,
+    tie.correction = tie.correction,
+    isExample = TRUE
   )
   if(snsRaw){
     output$Zraw = Zraw
@@ -288,6 +290,8 @@ plot.SNS.test <- function(x, ...){
   Cminus = x$Cminus
   E = x$E
   scoring = x$scoring
+  isExample = x$isExample
+  tie.correction = x$tie.correction
   CEX = 0.75
   switch(chart,
          Shewhart = {
@@ -313,16 +317,27 @@ plot.SNS.test <- function(x, ...){
     ymax = ymax + difMinZ
     ymin = ymin - difMinZ
   }
-
+  if(isExample){
+    ymin = - 10
+    ymax = - ymin
+  }
   switch(chart,
          Shewhart = {
-           ylab = "Z"
-          if (scoring == "Z-SQ"){
-            ymin = 0
-            ylab = expression(Z^2)
-          }
-           plot(o.id, Z, pch=19, ylim=c(ymin, ymax), xlab = "Batch",ylab=ylab,cex.lab=CEX*2, cex.axis=CEX*1.25, cex=CEX, col = ifelse((LCL > Z) | (Z > UCL), "red", "black"))
-           lines(o.id, Z, lt=2, lwd=CEX*1.5)
+            if (scoring == "Z-SQ"){
+              ymin = 0
+              ylab = expression(Z^2)
+            }
+            if(tie.correction == "Studentize"){
+             ylab = expression(T^group("(",3,")"))
+            }else if( tie.correction == "EstimateSD"){
+             ylab = expression(T^group("(",1,")"))
+            }else if(tie.correction == "EstimateSD2"){
+             ylab = expression(T^group("(",2,")"))
+            }else{
+             ylab = "Z"
+            }
+            plot(o.id, Z, pch=19, ylim=c(ymin, ymax), xlab = "Batch",ylab=ylab,cex.lab=CEX*2, cex.axis=CEX*1.25, cex=CEX, col = ifelse((LCL > Z) | (Z > UCL), "red", "black"))
+            lines(o.id, Z, lt=2, lwd=CEX*1.5)
          },
          CUSUM = {
            type = chart.par[3]
