@@ -166,7 +166,7 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     ns = ns$Z
     switch (scoring,
       "Z" = {# it is a vector with a subgroup size so it is needed to average them
-        z[i] = sum(ns)/sqrt(n)
+        z[i] = sum(ns)/(n)
       },
       "Z-SQ" = {# it is a vector with a subgroup size so it is needed to sum them
         z[i] = sum(ns)
@@ -180,7 +180,7 @@ SNS.test <- function(X, X.id, Y = NULL, theta = NULL, Ftheta = NULL,
     }else if( (tie.correction == "EstimateSD") || (tie.correction == "EstimateSD2")){
       z[i] = z[i] / (z.sd/sqrt(n))
     }else{
-      z[i] = z[i]
+      z[i] = z[i] / (1/sqrt(n))
     }
     Z = z[i]
     # check if the subgroup is in control according to each scheme
@@ -318,7 +318,7 @@ plot.SNS.test <- function(x, ...){
     ymin = ymin - difMinZ
   }
   if(isExample){
-    ymin = - 10
+    ymin = - 5
     ymax = - ymin
   }
   switch(chart,
