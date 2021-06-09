@@ -334,7 +334,12 @@ plot.SNS.test <- function(x, ...){
             }else if(tie.correction == "EstimateSD2"){
              ylab = expression(T^group("(",2,")"))
             }else{
-             ylab = "Z"
+              if(isExample){
+                ylab = expression(T^group("(",0,")"))
+              }else{
+                ylab = "Z"
+              }
+
             }
             plot(o.id, Z, pch=19, ylim=c(ymin, ymax), xlab = "Batch",ylab=ylab,cex.lab=CEX*2, cex.axis=CEX*1.25, cex=CEX, col = ifelse((LCL > Z) | (Z > UCL), "red", "black"))
             lines(o.id, Z, lt=2, lwd=CEX*1.5)
