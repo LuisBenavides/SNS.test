@@ -341,7 +341,7 @@ plot.SNS.test <- function(x, ...){
               }
 
             }
-            plot(o.id, Z, pch=19, ylim=c(ymin, ymax), xlab = "Batch",ylab=ylab,cex.lab=CEX*2, cex.axis=CEX*1.25, cex=CEX, col = ifelse((LCL > Z) | (Z > UCL), "red", "black"))
+            plot(o.id, Z, pch=ifelse((LCL > Z) | (Z > UCL),15,19), ylim=c(ymin, ymax), xlab = "Batch",ylab=ylab,cex.lab=CEX*2, cex.axis=CEX*1.25, cex=CEX, col = ifelse((LCL > Z) | (Z > UCL), "red", "black"))
             lines(o.id, Z, lt=2, lwd=CEX*1.5)
          },
          CUSUM = {
