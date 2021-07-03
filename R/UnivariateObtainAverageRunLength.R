@@ -66,7 +66,8 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
                   alignment = "unadjusted", constant = NULL, absolute=FALSE,
                   isFixed=FALSE,Chi2corrector="None", rounding.factor = NULL,
                   tie.correction = "EstimateSD",
-                  stop.times = 1, replicates = 1) {
+                  stop.times = 1, replicates = 1,
+                  limit.arl0=FALSE) {
   # initilize the reference sample
   Y <- NULL
   if (m > 0) { # if there are reference sample
@@ -203,12 +204,14 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 
 
     if (!is.null(rounding.factor)){
-
-        p = 1 - dbinom(stop.times, replicates, prob = 0.5)
-        if ((RL >= arl0 * 15) || (p < 0.0001)){
-          RL = arl0 * 15
-          in.Control <- FALSE
+        if (limit.arl0){
+          p = 1 - dbinom(stop.times, replicates, prob = 0.5)
+          if ((RL >= arl0 * 15) || (p < 0.0001)){
+            RL = arl0 * 15
+            in.Control <- FALSE
+          }
         }
+
 
     }else{
       if (calibrate){
@@ -216,7 +219,7 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
           in.Control <- FALSE
         }
       }
-      if (RL >= arl0 * 1000){
+      if (RL >= arl0 * 1e6){
         in.Control <- FALSE
       }
     }
