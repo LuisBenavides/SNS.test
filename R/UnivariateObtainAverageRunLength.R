@@ -205,9 +205,10 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 
     if (!is.null(rounding.factor)){
         if (limit.arl0){
-          p = 1 - dbinom(stop.times, replicates, prob = 0.5)
-          if ((RL >= arl0 * 15) || (p < 0.0001)){
-            RL = arl0 * 15
+          tolerance = arl0 * 1e5 / arl0
+          p = 1# - dbinom(stop.times, replicates, prob = 0.5)
+          if ((RL >= tolerance) || (p < 0.0001)){
+            RL = tolerance
             in.Control <- FALSE
           }
         }
