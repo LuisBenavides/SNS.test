@@ -216,13 +216,13 @@ getRL.test <- function(replica = 1, n, m, theta = NULL, Ftheta = NULL,
 
     }else{
       if (calibrate){
-        if (RL >= arl0){
+        if (RL >= arl0*1000){
           in.Control <- FALSE
         }
       }
-      if (RL >= arl0 * 1e6){
-        in.Control <- FALSE
-      }
+      #if (RL >= arl0 * 1e6){
+      #  in.Control <- FALSE
+      #}
     }
 
     # update the reference sample
