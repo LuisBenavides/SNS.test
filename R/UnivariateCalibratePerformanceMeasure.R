@@ -119,7 +119,7 @@ calibrateControlLimit.test <- function(targetARL = NULL, targetMRL = NULL,
       name <- "MRL"
     }
 
-    if (abs(y[i] - target) <= 0.05 * target) {
+    if (y[i] >= target && abs(y[i] - target) <= 0.05 * target) {
       #if the obtained value is in its 5% from target
       #return the par.value and the obtained value
       if (progress) cat("Convergence found with", name.par, "=", x[i], "--", name, "=", y[i], "\n", sep = " ")
